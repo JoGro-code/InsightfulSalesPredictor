@@ -18,8 +18,21 @@ def preprocess_data(df, training=True):
         y (pandas.Series, optional): Die Zielvariable, nur zurückgegeben, wenn `training=True`.
     """
     # Identifizieren kategorischer und numerischer Features
-    categorical_features = ['BranchCode']
-    numerical_features = ['CustomerValue', 'Quantity', 'PricePerUnit']
+    #categorical_features = ['BranchCode', 'CustomerValue']
+    categorical_features = ['BranchCode', 'CustomerValue', 'LastProduct'] if 'LastProduct' in df.columns else ['BranchCode', 'CustomerValue']
+    #numerical_features = ['Utilization','Quantity', 'PricePerUnit']
+    numerical_features = ['DaysSinceLastPurchase'] if 'LastPurchaseDate' in df.columns else []
+
+    # Feature Engineering für alle Daten
+    if 'LastPurchaseDate' in df.columns:
+        df['DaysSinceLastPurchase'] = (datetime.now() - pd.to_datetime(df['LastPurchaseDate'])).dt.days
+    
+    # Ergänzung für numerische Features in Trainingsdaten
+    if training:
+        numerical_features.extend(['Utilization', 'Quantity', 'PricePerUnit'])
+        if 'PurchaseDate' in df.columns:
+            df['DaysSincePurchase'] = (datetime.now() - pd.to_datetime(df['PurchaseDate'])).dt.days
+            numerical_features.append('DaysSincePurchase')
 
     # Ergänzung für Vorhersagedaten
     if not training:
@@ -60,8 +73,8 @@ def preprocess_data(df, training=True):
         X = preprocessor.transform(df)
     
     # Zielvariable separieren, wenn im Trainingsmodus
-    if training and 'Utilization' in df.columns:
-        y = df['Utilization']
+    if training and 'ProductID' in df.columns:
+        y = df['ProductID']
         return X, y
     else:
         return X

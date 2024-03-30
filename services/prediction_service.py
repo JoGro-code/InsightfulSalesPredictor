@@ -44,15 +44,42 @@ class PredictionService:
             self.model = joblib.load(self.model_path)
             print("Modell geladen von:", self.model_path)
         
+    #def predict(self, customer_features):
+    #    """Generiert eine Vorhersage für gegebene Kundendaten."""
+    #    # Stellen Sie sicher, dass das Modell geladen ist
+    #    self.load_model()
+    #    
+    #    # Umwandlung der Kundendaten in DataFrame und Vorverarbeitung
+    #    df = pd.DataFrame([customer_features], columns=['BranchCode', 'CustomerValue', 'Quantity', 'PricePerUnit'])
+    #    X = preprocess_data(df, training=False)
+    #    
+    #    # Erstellen der Vorhersage
+    #    prediction = self.model.predict(X)
+    #    return prediction
+
+
     def predict(self, customer_features):
         """Generiert eine Vorhersage für gegebene Kundendaten."""
         # Stellen Sie sicher, dass das Modell geladen ist
         self.load_model()
-        
-        # Umwandlung der Kundendaten in DataFrame und Vorverarbeitung
-        df = pd.DataFrame([customer_features], columns=['BranchCode', 'CustomerValue', 'Quantity', 'PricePerUnit'])
+
+        # Vorverarbeitung der Eingabedaten
+        # Hier nehmen wir an, dass customer_features ein Dictionary ist, das mindestens CustomerID und BranchCode enthält
+        # Optional können auch LastPurchaseDate und LastProduct enthalten sein
+        required_features = ['CustomerID', 'BranchCode']
+        optional_features = ['LastPurchaseDate', 'LastProduct']
+        feature_values = [customer_features.get(feature, None) for feature in required_features + optional_features]
+
+        # Hier könnte eine spezifischere Vorverarbeitungslogik implementiert werden,
+        # die basierend auf den verfügbaren Features dynamisch angepasst wird
+        df = pd.DataFrame([feature_values], columns=required_features + optional_features)
+
+        # Da unser Modell nicht direkt mit CustomerID oder BranchCode arbeitet,
+        # müssen wir sicherstellen, dass wir Features verwenden, die das Modell versteht.
+        # Dies könnte Encoding für kategoriale Variablen oder das Extrahieren
+        # zusätzlicher Informationen basierend auf CustomerID oder BranchCode beinhalten.
         X = preprocess_data(df, training=False)
-        
+
         # Erstellen der Vorhersage
         prediction = self.model.predict(X)
         return prediction

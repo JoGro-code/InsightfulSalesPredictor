@@ -19,8 +19,11 @@ class SalesPredictionModel(BaseEstimator, TransformerMixin):
         und einem vordefinierten Preprocessing-Pipeline.
         """
         # Definieren der Vorverarbeitung für numerische und kategoriale Spalten
-        numeric_features = ['Quantity', 'PricePerUnit']
-        categorical_features = ['BranchCode', 'CustomerValue']
+       #numeric_features = ['Quantity', 'PricePerUnit']
+        numeric_features = ['DaysSinceLastPurchase']
+
+        #categorical_features = ['BranchCode', 'CustomerValue']
+        categorical_features = ['BranchCode', 'CustomerValue', 'LastProduct']
         
         numeric_transformer = Pipeline(steps=[
             ('scaler', StandardScaler())
@@ -52,18 +55,29 @@ class SalesPredictionModel(BaseEstimator, TransformerMixin):
         self.model.fit(X, y)
         return self
     
+   #def predict(self, X):
+   #    """
+   #    Generiert Vorhersagen für die gegebenen Daten.
+   #    
+   #    Args:
+   #        X (pandas.DataFrame): Die Daten, für die Vorhersagen generiert werden sollen.
+   #        
+   #    Returns:
+   #        numpy.ndarray: Die generierten Vorhersagen.
+   #    """
+   #    predictions = self.model.predict(X)
+   #    return predictions
+    
     def predict(self, X):
         """
         Generiert Vorhersagen für die gegebenen Daten.
-        
-        Args:
-            X (pandas.DataFrame): Die Daten, für die Vorhersagen generiert werden sollen.
-            
-        Returns:
-            numpy.ndarray: Die generierten Vorhersagen.
         """
-        predictions = self.model.predict(X)
-        return predictions
+        # Für die Produkt-ID
+        predicted_product_id = self.model.predict(X)
+        # Für den Vorhersage-Score (z.B. Wahrscheinlichkeit des am meisten vorhergesagten Labels)
+        predicted_scores = self.model.predict_proba(X).max(axis=1)
+        
+        return predicted_product_id, predicted_scores
     
     def save_model(self, path='models/sales_prediction_model.joblib'):
         """
