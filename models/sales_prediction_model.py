@@ -1,6 +1,6 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 import pandas as pd
@@ -39,9 +39,14 @@ class SalesPredictionModel(BaseEstimator, TransformerMixin):
                 ('cat', categorical_transformer, categorical_features),
             ])
         
+        #self.model = Pipeline(steps=[
+        #    ('preprocessor', self.preprocessor),
+        #    ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
+        #])
+
         self.model = Pipeline(steps=[
             ('preprocessor', self.preprocessor),
-            ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
+            ('classifier', RandomForestClassifier(n_estimators=100, random_state=42)) 
         ])
         
     def fit(self, X, y):
@@ -72,11 +77,15 @@ class SalesPredictionModel(BaseEstimator, TransformerMixin):
         """
         Generiert Vorhersagen für die gegebenen Daten.
         """
-        # Für die Produkt-ID
+        ## Für die Produkt-ID
+        #predicted_product_id = self.model.predict(X)
+        ## Für den Vorhersage-Score (z.B. Wahrscheinlichkeit des am meisten vorhergesagten Labels)
+        #predicted_scores = self.model.predict_proba(X) #.max(axis=1)
+        #
+        #return predicted_product_id, predicted_scores
+    
         predicted_product_id = self.model.predict(X)
-        # Für den Vorhersage-Score (z.B. Wahrscheinlichkeit des am meisten vorhergesagten Labels)
         predicted_scores = self.model.predict_proba(X).max(axis=1)
-        
         return predicted_product_id, predicted_scores
     
     def save_model(self, path='models/sales_prediction_model.joblib'):

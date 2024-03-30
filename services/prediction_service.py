@@ -81,5 +81,9 @@ class PredictionService:
         X = preprocess_data(df, training=False)
 
         # Erstellen der Vorhersage
-        prediction = self.model.predict(X)
-        return prediction
+        #prediction = self.model.predict(X)
+        #return prediction
+        predicted_product_id, predicted_scores = self.model.predict(X)
+        sorted_predictions = sorted(zip(predicted_product_id, predicted_scores), key=lambda x: x[1], reverse=True)
+
+        return sorted_predictions
