@@ -177,6 +177,38 @@ After generating the base prediction (e.g., ProductID, PredictionScore), append 
 
 This example demonstrates how to incorporate new input parameters ('CustomerAge' and 'LastPurchaseCategory') into the prediction process and extend the prediction output to include 'EstimatedPurchaseValue'. It covers modifications in data preprocessing, the prediction service, and the model itself, as well as adjustments to the database schema to store new output parameters. The specifics of calculating 'EstimatedPurchaseValue' would depend on additional business logic or model output.
 
+#### Example
+
+Input:
+
+```python
+customer_features = pd.DataFrame({
+    'BranchCode': ['B001'],
+    'CustomerValue': ['High'],
+    'LastProduct': ['P1234'],
+    'DaysSinceLastPurchase': [30]
+})
+```
+
+Output:
+
+```python
+
+model = SalesPredictionModel()
+model.load_model('path/to/your/trained/model.joblib')
+
+# Vorbereiten der Kundendaten und Durchführen der Vorhersage
+predicted_product_id, predicted_scores = model.predict(customer_features)
+
+print("Vorhergesagte ProductID:", predicted_product_id)
+print("Vorhersage-Score:", predicted_scores)
+
+
+Vorhergesagte ProductID: ['P9876']
+Vorhersage-Score: [0.85]
+
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit pull requests with new features, improvements, or bug fixes.
