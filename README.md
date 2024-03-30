@@ -182,31 +182,24 @@ This example demonstrates how to incorporate new input parameters ('CustomerAge'
 Input:
 
 ```python
-customer_features = pd.DataFrame({
-    'BranchCode': ['B001'],
-    'CustomerValue': ['High'],
-    'LastProduct': ['P1234'],
-    'DaysSinceLastPurchase': [30]
-})
+customer_features = {
+    'CustomerID': '123456',
+    'BranchCode': 'B001',
+    'LastPurchaseDate': '2023-01-25',  # Optional
+    'LastProduct': 'ProdA'  # Optional
+}
+
 ```
 
 Output:
 
 ```python
-
-model = SalesPredictionModel()
-model.load_model('path/to/your/trained/model.joblib')
-
-# Vorbereiten der Kundendaten und Durchführen der Vorhersage
-predicted_product_id, predicted_scores = model.predict(customer_features)
-
-print("Vorhergesagte ProductID:", predicted_product_id)
-print("Vorhersage-Score:", predicted_scores)
-
-
-Vorhergesagte ProductID: ['P9876']
-Vorhersage-Score: [0.85]
-
+[
+    ('ProdID123', 0.85),
+    ('ProdID456', 0.75),
+    ('ProdID789', 0.65),
+    ...
+]
 ```
 
 ## Contributing
